@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Programming Languages Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        canvas {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <h1 class="mt-5 mb-4 text-center">Top Programming Languages Visualization</h1>
+        <canvas id="programmingLanguagesChart"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('https://api.stackexchange.com/2.3/tags?order=desc&sort=popular&site=stackoverflow')
+                .then(response => response.json())
+                .then(data => {
+                    const languages = data.items.map(item => item.name);
+                    const counts = data.items.map(item => item.count);
+
+                    const ctx = document.getElementById('programmingLanguagesChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: languages.slice(0, 10), // Displaying only the top 10 languages
+                            datasets: [{
+                                label: 'Usage Count',
+                                data: counts.slice(0, 10),
+                                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+</body>
+</html>
